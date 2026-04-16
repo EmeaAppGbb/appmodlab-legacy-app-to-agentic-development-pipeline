@@ -1,0 +1,6 @@
+@KeystoneInsurance.Modern_HostAddress = http://localhost:5236
+
+GET {{KeystoneInsurance.Modern_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
