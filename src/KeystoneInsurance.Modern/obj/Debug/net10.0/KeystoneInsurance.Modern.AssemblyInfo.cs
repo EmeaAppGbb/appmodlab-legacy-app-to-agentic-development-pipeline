@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KeystoneInsurance.Modern")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+376c746d44e8c36fbc0ef193292819ecedccaf7b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8456bff875dcd4d141227318491a821994e68830")]
 [assembly: System.Reflection.AssemblyProductAttribute("KeystoneInsurance.Modern")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KeystoneInsurance.Modern")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

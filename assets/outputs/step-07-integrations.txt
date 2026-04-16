@@ -1,0 +1,257 @@
+ÔùÅ List directory src\KeystoneInsurance.Modern
+  Ôöö 12 files found
+
+ÔùÅ Read integration-specs.md
+  Ôöé specs\integration-specs.md
+  Ôöö 1 line read
+
+ÔùÅ Read architecture-spec.md
+  Ôöé specs\architecture-spec.md
+  Ôöö 306 lines read
+
+ÔùÅ Read integration-specs.md
+  Ôöé specs\integration-specs.md
+  Ôöö L1:100 (100 lines read)
+
+ÔùÅ Read Program.cs
+  Ôöé src\KeystoneInsurance.Modern\Program.cs
+  Ôöö 51 lines read
+
+ÔùÅ Read KeystoneInsurance.Modern.csproj
+  Ôöé src\KeystoneInsurance.Modern\KeystoneInsurance.Modern.csproj
+  Ôöö 18 lines read
+
+ÔùÅ List directory src\KeystoneInsurance.Modern\Services
+  Ôöö 5 files found
+
+ÔùÅ List directory src\KeystoneInsurance.Modern\Domain
+  Ôöö 4 files found
+
+ÔùÅ List directory src\KeystoneInsurance.Modern\Data
+  Ôöö 3 files found
+
+ÔùÅ Read integration-specs.md
+  Ôöé specs\integration-specs.md
+  Ôöö L100:250 (151 lines read)
+
+ÔùÅ List directory src\KeystoneInsurance.Modern\Domain\Entities
+  Ôöö 9 files found
+
+ÔùÅ List directory src\KeystoneInsurance.Modern\Domain\Enums
+  Ôöö 7 files found
+
+ÔùÅ List directory src\KeystoneInsurance.Modern\Domain\ValueObjects
+  Ôöö 3 files found
+
+ÔùÅ Read integration-specs.md
+  Ôöé specs\integration-specs.md
+  Ôöö L250:450 (201 lines read)
+
+ÔùÅ Read Quote.cs
+  Ôöé src\KeystoneInsurance.Modern\Domain\Entities\Quote.cs
+  Ôöö 60 lines read
+
+ÔùÅ Read Policy.cs
+  Ôöé src\KeystoneInsurance.Modern\Domain\Entities\Policy.cs
+  Ôöö 56 lines read
+
+ÔùÅ Read Money.cs
+  Ôöé src\KeystoneInsurance.Modern\Domain\ValueObjects\Money.cs
+  Ôöö 12 lines read
+
+ÔùÅ Read Endorsement.cs
+  Ôöé src\KeystoneInsurance.Modern\Domain\Entities\Endorsement.cs
+  Ôöö 32 lines read
+
+ÔùÅ Read integration-specs.md
+  Ôöé specs\integration-specs.md
+  Ôöö L450:600 (151 lines read)
+
+ÔùÅ Read Client.cs
+  Ôöé src\KeystoneInsurance.Modern\Domain\Entities\Client.cs
+  Ôöö 43 lines read
+
+ÔùÅ Read appsettings.json
+  Ôöé src\KeystoneInsurance.Modern\appsettings.json
+  Ôöö 9 lines read
+
+ÔùÅ Read integration-specs.md
+  Ôöé specs\integration-specs.md
+  Ôöö L600:700 (41 lines read)
+
+ÔùÅ Read KeystoneDbContext.cs
+  Ôöé src\KeystoneInsurance.Modern\Data\KeystoneDbContext.cs
+  Ôöö 24 lines read
+
+ÔùÅ Read Property.cs
+  Ôöé src\KeystoneInsurance.Modern\Domain\Entities\Property.cs
+  Ôöö 28 lines read
+
+Now I have a complete picture. Let me create all the files. I'll start by creating the directory structure and all source files in parallel batches.
+
+ÔùÅ Create directory structure (shell)
+  Ôöé
+  Ôöé $base = "C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipe
+  Ôöé line\src\KeystoneInsurance.Modern"
+  Ôöé New-Item -ItemType Directory -Force -Path
+  Ôöé "$base\Integration\ServiceBus\Messages"ÔÇª
+  Ôöö 21 lines...
+
+Now let me create all the files. I'll batch them efficiently:
+
+ÔùÅ Create PolicyIssuedMessage.cs +16
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Messages\PolicyIssuedMes
+    sage.cs
+
+ÔùÅ Create ComplianceEventMessage.cs +13
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Messages\ComplianceEvent
+    Message.cs
+
+ÔùÅ Create RenewalDueMessage.cs +12
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Messages\RenewalDueMessa
+    ge.cs
+
+ÔùÅ Create EndorsementRequestedMessage.cs +13
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Messages\EndorsementRequ
+    estedMessage.cs
+
+ÔùÅ Create IMessagePublisher.cs +12
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Publishers\IMessagePubli
+    sher.cs
+
+ÔùÅ Create EndorsementPublisher.cs +39
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Publishers\EndorsementPu
+    blisher.cs
+
+ÔùÅ Create PolicyIssuancePublisher.cs +37
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Publishers\PolicyIssuanc
+    ePublisher.cs
+
+ÔùÅ Create ServiceBusPublisher.cs +107
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Publishers\ServiceBusPub
+    lisher.cs
+
+Now create the handlers (BackgroundService workers) and the remaining integration files:
+
+ÔùÅ Create PolicyDocumentWorker.cs +74
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Handlers\PolicyDocumentW
+    orker.cs
+
+ÔùÅ Create EndorsementProcessorWorker.cs +75
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Handlers\EndorsementProc
+    essorWorker.cs
+
+ÔùÅ Create IReinsuranceApiClient.cs +55
+  Ôöö src\KeystoneInsurance.Modern\Integration\Reinsurance\IReinsuranceApiClient.c
+    s
+
+ÔùÅ Create RenewalProcessorWorker.cs +73
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Handlers\RenewalProcesso
+    rWorker.cs
+
+ÔùÅ Create ReinsuranceApiClient.cs +64
+  Ôöö src\KeystoneInsurance.Modern\Integration\Reinsurance\ReinsuranceApiClient.cs
+
+ÔùÅ Create RegulatoryReportingClient.cs +78
+  Ôöö src\KeystoneInsurance.Modern\Integration\Regulatory\RegulatoryReportingClien
+    t.cs
+
+ÔùÅ Create IRegulatoryReportingClient.cs +58
+  Ôöö src\KeystoneInsurance.Modern\Integration\Regulatory\IRegulatoryReportingClie
+    nt.cs
+
+Now create the Documents layer and update Program.cs + csproj + appsettings:
+
+ÔùÅ Create IPolicyDocumentGenerator.cs +18
+  Ôöö src\KeystoneInsurance.Modern\Documents\IPolicyDocumentGenerator.cs
+
+ÔùÅ Create QuestPdfDocumentGenerator.cs +457
+  Ôöö src\KeystoneInsurance.Modern\Documents\QuestPdfDocumentGenerator.cs
+
+Now update the .csproj, Program.cs, and appsettings.json:
+
+ÔùÅ Edit Program.cs +74
+  Ôöö src\KeystoneInsurance.Modern\Program.cs
+
+ÔùÅ Edit KeystoneInsurance.Modern.csproj +5
+  Ôöö src\KeystoneInsurance.Modern\KeystoneInsurance.Modern.csproj
+
+ÔùÅ Edit appsettings.json +35 -1
+  Ôöö src\KeystoneInsurance.Modern\appsettings.json
+
+Now let's restore packages and build to verify everything compiles:
+
+ÔùÅ Restore NuGet packages (shell)
+  Ôöé cd C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline\src
+  Ôöé \KeystoneInsurance.Modern && dotnet restore 2>&1 | Select-Object -Last 20
+  Ôöö 3 lines...
+
+ÔùÅ Build the project (shell)
+  Ôöé cd C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline\src
+  Ôöé \KeystoneInsurance.Modern && dotnet build --no-restore 2>&1
+  Ôöö 223 lines...
+
+Build succeeded. Let me fix the 3 null-reference warnings:
+
+ÔùÅ Read PolicyDocumentWorker.cs
+  Ôöé src\KeystoneInsurance.Modern\Integration\ServiceBus\Handlers\PolicyDocumentW
+  Ôöé orker.cs
+  Ôöö L40:48 (8 lines read)
+
+The warning is about `message` potentially being null from `ToObjectFromJson`. Let me fix all three:
+
+ÔùÅ Edit EndorsementProcessorWorker.cs +2 -1
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Handlers\EndorsementProc
+    essorWorker.cs
+
+ÔùÅ Edit PolicyDocumentWorker.cs +2 -1
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Handlers\PolicyDocumentW
+    orker.cs
+
+ÔùÅ Edit RenewalProcessorWorker.cs +2 -1
+  Ôöö src\KeystoneInsurance.Modern\Integration\ServiceBus\Handlers\RenewalProcesso
+    rWorker.cs
+
+ÔùÅ Rebuild to verify warnings fixed (shell)
+  Ôöé cd C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline\src
+  Ôöé \KeystoneInsurance.Modern && dotnet build --no-restore 2>&1 | Select-String
+  Ôöé -Pattern "(error|warning|succeeded|failed)" | Select-Object -Last 10
+  Ôöö 4 lines...
+
+Clean build with 0 warnings, 0 errors. Now let me commit:
+
+ÔùÅ Stage changes for commit (shell)
+  Ôöé cd C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline
+  Ôöé && git add src/KeystoneInsurance.Modern/Integration/
+  Ôöé src/KeystoneInsurance.Modern/Documents/
+  Ôöé src/KeystoneInsurance.Modern/Program.cs
+  Ôöé src/KeystoneInsurance.Modern/KeystoneInsurance.Modern.csproj ÔÇª
+  Ôöö 91 lines...
+
+ÔùÅ Commit all integration components (shell)
+  Ôöé cd C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline
+  Ôöé && git commit -m "Add integration components: Service Bus, Reinsurance,
+  Ôöé Regulatory, QuestPDF
+  Ôöé
+  Ôöé - Integration/ServiceBus/Messages: PolicyIssued, EndorsementRequested, ÔÇª
+  Ôöö 44 lines...
+
+All done. Build succeeded with 0 warnings, 0 errors. Here's what was created:
+
+**Service Bus** (`Integration/ServiceBus/`):
+- **Messages**: `PolicyIssuedMessage`, `EndorsementRequestedMessage`, `RenewalDueMessage`, `ComplianceEventMessage`
+- **Publishers**: `ServiceBusPublisher` (unified `IMessagePublisher`), plus dedicated `PolicyIssuancePublisher` and `EndorsementPublisher`
+- **Handlers**: `PolicyDocumentWorker`, `EndorsementProcessorWorker`, `RenewalProcessorWorker` ÔÇö `BackgroundService` workers with auto-lock renewal and DLQ support
+
+**Reinsurance** (`Integration/Reinsurance/`): `ReinsuranceApiClient` with typed `HttpClient`, Polly retry (3 attempts, exponential backoff), circuit breaker (50% failure ratio), and per-attempt timeout
+
+**Regulatory** (`Integration/Regulatory/`): `RegulatoryReportingClient` with Polly retry (2 attempts) and timeout for quarterly reports, rate filings, and policy transactions
+
+**Documents** (`Documents/`): `QuestPdfDocumentGenerator` generating policy declarations, endorsement docs, quote summaries, and renewal notices ÔÇö stored in Azure Blob Storage
+
+**Program.cs**: All services registered ÔÇö Service Bus client, Blob Storage, HttpClients with Polly resilience pipelines, QuestPDF license, hosted workers, and document generator.
+
+
+Changes   +1321 -4
+Requests  3 Premium (5m 20s)
+Tokens    Ôåæ 1.0m ÔÇó Ôåô 21.9k ÔÇó 978.6k (cached)
