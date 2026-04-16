@@ -1,0 +1,30 @@
+================================================================================
+STEP 04: CONFIGURE AGENT SPECIALIZATIONS
+================================================================================
+Date: 2025-01-15
+Analyst: Ash (Senior Developer)
+
+See: agent-specializations.yaml for the full agent configuration.
+
+This step defines specialized agent roles for the modernization pipeline:
+
+1. Spec2Cloud Analyzer    — Reverse-engineers legacy code into specifications
+2. Spec2Cloud Architect   — Designs modern service boundaries and API contracts
+3. SQUAD Brain            — Decomposes specs into development plans
+4. SQUAD Hands (Coder)    — Implements business logic in .NET 9
+5. SQUAD Hands (Data)     — Handles database migration and EF Core
+6. SQUAD Hands (Infra)    — Azure infrastructure and deployment
+7. SQUAD Eyes (Reviewer)  — Spec-based code review
+8. SQUAD Eyes (Security)  — Security and compliance review
+9. SQUAD Eyes (QA)        — End-to-end validation
+10. SQUAD Mouth (Writer)  — Documentation generation
+
+Each agent has:
+  - Defined scope and responsibilities
+  - Required context (files, specs, artifacts)
+  - Success criteria
+  - Interaction patterns with other agents
+
+================================================================================
+END OF STEP 04
+================================================================================

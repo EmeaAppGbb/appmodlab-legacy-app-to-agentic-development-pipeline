@@ -1,0 +1,42 @@
+================================================================================
+STEP 06: DEFINE EXECUTION PLAN
+================================================================================
+Date: 2025-01-15
+Analyst: Ash (Senior Developer)
+
+See: execution-plan.md for the full phased execution plan.
+
+Summary:
+
+Phase 1: Legacy Analysis & Specification (1.5 hours)
+  - Spec2Cloud Analyzer: Reverse-engineer all 7 services, 8 entities, 3 rule classes
+  - Spec2Cloud Architect: Design 5 service boundaries with API contracts
+  - SQUAD Brain: Create 30+ work item backlog with dependencies
+
+Phase 2: Foundation & Core Services (4 hours) — CRITICAL PATH
+  - SQUAD Hands (Architect): Scaffold .NET 9 solution structure
+  - SQUAD Hands (Data): Migrate 8 entities + database schema to EF Core
+  - SQUAD Hands (Coder): Refactor QuotingEngine.cs (685 lines → pipeline pattern)
+  - SQUAD Hands (Coder): Implement underwriting evaluators + compliance rule engine
+
+Phase 3: Integrations (2 hours)
+  - SQUAD Hands (Infra): Azure Service Bus replacing MSMQ
+  - SQUAD Hands (Coder): REST client replacing WCF for reinsurance
+  - SQUAD Hands (Coder): QuestPDF replacing Crystal Reports
+
+Phase 4: Quality & Documentation (2 hours)
+  - SQUAD Eyes (Reviewer): Spec-based code review
+  - SQUAD Eyes (Security): Security review
+  - SQUAD Eyes (QA): Premium parity validation (golden test suite)
+  - SQUAD Mouth: API docs, ADRs, deployment guide, migration guide
+
+Phase 5: Deployment & Validation (2 hours)
+  - SQUAD Hands (Infra): Bicep templates for Azure Container Apps stack
+  - SQUAD Hands (Infra): GitHub Actions CI/CD pipeline
+  - SQUAD Eyes (QA): End-to-end workflow validation
+
+Total: 8-12 hours | 10 agents | 30+ work items | 5 phases
+
+================================================================================
+END OF STEP 06
+================================================================================
