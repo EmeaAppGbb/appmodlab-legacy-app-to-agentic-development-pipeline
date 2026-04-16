@@ -1,0 +1,108 @@
+@page "/policies"
+@inject KeystoneApiClient Api
+@inject NavigationManager Nav
+
+<PageTitle>Policies — Keystone Insurance</PageTitle>
+
+<div class="page-header">
+    <h1>&#x1F4C4; Policies</h1>
+</div>
+
+<div class="card" style="margin-bottom:1rem;">
+    <div style="display:flex;gap:1rem;align-items:end;">
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Policy ID</label>
+            <InputNumber class="form-control" @bind-Value="_searchId" style="width:140px;" />
+        </div>
+        <button class="btn btn-primary btn-sm" @onclick="SearchPolicy">Search</button>
+    </div>
+</div>
+
+@if (_loading)
+{
+    <div class="loading">Loading...</div>
+}
+else if (_error is not null)
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else if (_policies.Count == 0)
+{
+    <div class="card" style="text-align:center;padding:3rem;color:var(--text-muted);">
+        <p>Search for a policy by ID, or browse approved quotes to bind new policies.</p>
+        <a href="quotes" class="btn btn-primary" style="margin-top:1rem;">Browse Quotes</a>
+    </div>
+}
+else
+{
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Policy #</th>
+                    <th>Status</th>
+                    <th>Effective</th>
+                    <th>Expiration</th>
+                    <th>Annual Premium</th>
+                    <th>Payment Plan</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in _policies)
+                {
+                    <tr>
+                        <td><strong>@p.PolicyNumber</strong></td>
+                        <td><span class="badge @GetPolicyBadge(p.Status)">@p.Status</span></td>
+                        <td>@p.EffectiveDate.ToString("MM/dd/yyyy")</td>
+                        <td>@p.ExpirationDate.ToString("MM/dd/yyyy")</td>
+                        <td>@p.AnnualPremium.ToString("C")</td>
+                        <td>@p.PaymentPlan</td>
+                        <td><a href="policies/@p.PolicyId" class="btn btn-outline btn-sm">View</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<PolicyDetailDto> _policies = new();
+    private bool _loading;
+    private string? _error;
+    private int _searchId;
+
+    private async Task SearchPolicy()
+    {
+        if (_searchId <= 0) return;
+        _loading = true;
+        _error = null;
+        _policies.Clear();
+
+        try
+        {
+            var policy = await Api.GetPolicyAsync(_searchId);
+            if (policy is not null)
+            {
+                _policies.Add(policy);
+            }
+            else
+            {
+                _error = $"Policy #{_searchId} not found.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to load policy: {ex.Message}";
+        }
+        _loading = false;
+    }
+
+    private static string GetPolicyBadge(string status) => status switch
+    {
+        "Active" => "badge-active",
+        "Cancelled" => "badge-cancelled",
+        "Expired" => "badge-declined",
+        _ => "badge-pending"
+    };
+}

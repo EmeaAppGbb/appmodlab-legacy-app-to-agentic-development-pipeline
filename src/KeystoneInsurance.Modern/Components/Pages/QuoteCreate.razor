@@ -1,0 +1,216 @@
+@page "/quotes/create"
+@inject KeystoneApiClient Api
+@inject NavigationManager Nav
+
+<PageTitle>New Quote — Keystone Insurance</PageTitle>
+
+<div class="page-header">
+    <h1>&#x2795; Create New Quote</h1>
+    <a href="quotes" class="btn btn-outline">&#x25C0; Back to Quotes</a>
+</div>
+
+@if (_success is not null)
+{
+    <div class="alert alert-success">
+        Quote <strong>@_success.QuoteNumber</strong> created successfully!
+        Premium: <strong>@_success.TotalPremium?.ToString("C")</strong>
+        <a href="quotes/@_success.QuoteId" style="margin-left:1rem;" class="btn btn-primary btn-sm">View Quote</a>
+    </div>
+}
+
+@if (_error is not null)
+{
+    <div class="alert alert-danger">@_error</div>
+}
+
+<EditForm Model="_model" OnValidSubmit="HandleSubmit" FormName="createQuote">
+    <DataAnnotationsValidator />
+
+    <div class="card">
+        <div class="card-header">&#x1F3E0; Property Information</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Property Address *</label>
+                <InputText class="form-control" @bind-Value="_model.PropertyAddress" />
+                <ValidationMessage For="@(() => _model.PropertyAddress)" class="validation-message" />
+            </div>
+            <div class="form-group">
+                <label>City *</label>
+                <InputText class="form-control" @bind-Value="_model.City" />
+            </div>
+            <div class="form-group">
+                <label>State Code *</label>
+                <InputText class="form-control" @bind-Value="_model.StateCode" placeholder="e.g. IL" />
+            </div>
+            <div class="form-group">
+                <label>Zip Code *</label>
+                <InputText class="form-control" @bind-Value="_model.ZipCode" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Property Value ($) *</label>
+                <InputNumber class="form-control" @bind-Value="_model.PropertyValue" />
+            </div>
+            <div class="form-group">
+                <label>Construction Type *</label>
+                <InputSelect class="form-control" @bind-Value="_model.ConstructionType">
+                    <option value="Fire-Resistive">Fire-Resistive</option>
+                    <option value="Non-Combustible">Non-Combustible</option>
+                    <option value="Heavy Timber">Heavy Timber</option>
+                    <option value="Ordinary Masonry">Ordinary Masonry</option>
+                    <option value="Wood Frame">Wood Frame</option>
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label>Occupancy Type *</label>
+                <InputSelect class="form-control" @bind-Value="_model.OccupancyType">
+                    <option value="Office">Office</option>
+                    <option value="Retail">Retail</option>
+                    <option value="Warehouse">Warehouse</option>
+                    <option value="Manufacturing-Light">Manufacturing-Light</option>
+                    <option value="Manufacturing-Heavy">Manufacturing-Heavy</option>
+                    <option value="Restaurant">Restaurant</option>
+                    <option value="Habitational">Habitational</option>
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label>Year Built</label>
+                <InputNumber class="form-control" @bind-Value="_model.YearBuilt" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Square Footage</label>
+                <InputNumber class="form-control" @bind-Value="_model.SquareFootage" />
+            </div>
+            <div class="form-group">
+                <label>Number of Stories</label>
+                <InputNumber class="form-control" @bind-Value="_model.NumberOfStories" />
+            </div>
+            <div class="form-group">
+                <label>Roof Type</label>
+                <InputSelect class="form-control" @bind-Value="_model.RoofType">
+                    <option value="">Select...</option>
+                    <option value="TPO/EPDM">TPO/EPDM</option>
+                    <option value="Built-Up">Built-Up</option>
+                    <option value="Metal">Metal</option>
+                    <option value="Tile">Tile</option>
+                    <option value="Shingle">Shingle</option>
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label>Roof Age (years)</label>
+                <InputNumber class="form-control" @bind-Value="_model.RoofAge" />
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">&#x1F6E1;&#xFE0F; Protection Systems</div>
+        <div class="form-row">
+            <div class="form-check">
+                <InputCheckbox @bind-Value="_model.SprinklersInstalled" />
+                <label>Sprinklers Installed</label>
+            </div>
+            <div class="form-check">
+                <InputCheckbox @bind-Value="_model.AlarmSystemInstalled" />
+                <label>Alarm System Installed</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">&#x1F4B0; Coverage Details</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Coverage Limit ($) *</label>
+                <InputNumber class="form-control" @bind-Value="_model.CoverageLimit" />
+            </div>
+            <div class="form-group">
+                <label>Deductible ($) *</label>
+                <InputNumber class="form-control" @bind-Value="_model.Deductible" />
+            </div>
+        </div>
+        <div style="margin-top:0.75rem;">
+            <div class="form-check">
+                <InputCheckbox @bind-Value="_model.BusinessInterruptionCoverage" />
+                <label>Business Interruption Coverage</label>
+            </div>
+            @if (_model.BusinessInterruptionCoverage)
+            {
+                <div class="form-group" style="margin-top:0.5rem;max-width:300px;">
+                    <label>Business Interruption Limit ($)</label>
+                    <InputNumber class="form-control" @bind-Value="_model.BusinessInterruptionLimit" />
+                </div>
+            }
+            <div class="form-check">
+                <InputCheckbox @bind-Value="_model.EquipmentBreakdownCoverage" />
+                <label>Equipment Breakdown Coverage</label>
+            </div>
+            <div class="form-check">
+                <InputCheckbox @bind-Value="_model.FloodCoverage" />
+                <label>Flood Coverage</label>
+            </div>
+            <div class="form-check">
+                <InputCheckbox @bind-Value="_model.EarthquakeCoverage" />
+                <label>Earthquake Coverage</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">&#x1F4C9; Loss History</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Prior Claims Count</label>
+                <InputNumber class="form-control" @bind-Value="_model.PriorClaimsCount" />
+            </div>
+            <div class="form-group">
+                <label>Prior Claims Total Amount ($)</label>
+                <InputNumber class="form-control" @bind-Value="_model.PriorClaimsTotalAmount" />
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:1rem;margin-top:1rem;">
+        <button type="submit" class="btn btn-primary" disabled="@_submitting">
+            @if (_submitting) { <span>Creating...</span> } else { <span>&#x1F4BE; Create Quote & Calculate Premium</span> }
+        </button>
+        <a href="quotes" class="btn btn-outline">Cancel</a>
+    </div>
+</EditForm>
+
+@code {
+    private CreateQuoteModel _model = new();
+    private bool _submitting;
+    private string? _error;
+    private CreateQuoteResponse? _success;
+
+    private async Task HandleSubmit()
+    {
+        _submitting = true;
+        _error = null;
+        _success = null;
+
+        try
+        {
+            var response = await Api.CreateQuoteAsync(_model);
+            if (response.IsSuccessStatusCode)
+            {
+                _success = await response.Content.ReadFromJsonAsync<CreateQuoteResponse>();
+            }
+            else
+            {
+                var body = await response.Content.ReadAsStringAsync();
+                _error = $"Failed to create quote ({response.StatusCode}): {body}";
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = $"Error: {ex.Message}";
+        }
+
+        _submitting = false;
+    }
+}

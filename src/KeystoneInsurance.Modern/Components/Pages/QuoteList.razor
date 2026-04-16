@@ -1,0 +1,131 @@
+@page "/quotes"
+@inject KeystoneApiClient Api
+@inject NavigationManager Nav
+
+<PageTitle>Quotes — Keystone Insurance</PageTitle>
+
+<div class="page-header">
+    <h1>&#x1F4CB; Quotes</h1>
+    <a href="quotes/create" class="btn btn-primary">&#x2795; New Quote</a>
+</div>
+
+<div class="card" style="margin-bottom:1rem;">
+    <div style="display:flex;gap:1rem;align-items:end;flex-wrap:wrap;">
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Status</label>
+            <select class="form-control" @bind="_statusFilter" style="width:160px;">
+                <option value="">All</option>
+                <option value="Draft">Draft</option>
+                <option value="Approved">Approved</option>
+                <option value="Declined">Declined</option>
+                <option value="ReferToSenior">Referred</option>
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>State</label>
+            <input class="form-control" @bind="_stateFilter" placeholder="e.g. IL" style="width:100px;" />
+        </div>
+        <button class="btn btn-primary btn-sm" @onclick="LoadQuotes">Search</button>
+    </div>
+</div>
+
+@if (_loading)
+{
+    <div class="loading">Loading quotes...</div>
+}
+else if (_error is not null)
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else
+{
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Quote #</th>
+                    <th>Client</th>
+                    <th>Property</th>
+                    <th>State</th>
+                    <th>Premium</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_result.Items.Count == 0)
+                {
+                    <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:2rem;">No quotes found</td></tr>
+                }
+                @foreach (var q in _result.Items)
+                {
+                    <tr>
+                        <td><strong>@q.QuoteNumber</strong></td>
+                        <td>@(q.ClientName ?? "—")</td>
+                        <td>@q.PropertyAddress, @q.City</td>
+                        <td>@q.StateCode</td>
+                        <td>@(q.TotalPremium?.ToString("C") ?? "—")</td>
+                        <td><span class="badge @GetStatusBadge(q.Status)">@q.Status</span></td>
+                        <td>@q.CreatedDate.ToString("MM/dd/yyyy")</td>
+                        <td><a href="quotes/@q.QuoteId" class="btn btn-outline btn-sm">View</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (_result.TotalCount > _result.PageSize)
+        {
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:1rem;border-top:1px solid var(--border);margin-top:0.5rem;">
+                <span style="font-size:0.8rem;color:var(--text-muted);">
+                    Showing @((_result.Page - 1) * _result.PageSize + 1)–@Math.Min(_result.Page * _result.PageSize, _result.TotalCount) of @_result.TotalCount
+                </span>
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="btn btn-outline btn-sm" disabled="@(_result.Page <= 1)" @onclick="PrevPage">&#x25C0; Prev</button>
+                    <button class="btn btn-outline btn-sm" disabled="@(_result.Page * _result.PageSize >= _result.TotalCount)" @onclick="NextPage">Next &#x25B6;</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private QuoteListResponse _result = new();
+    private bool _loading = true;
+    private string? _error;
+    private string _statusFilter = "";
+    private string _stateFilter = "";
+    private int _page = 1;
+
+    protected override async Task OnInitializedAsync() => await LoadQuotes();
+
+    private async Task LoadQuotes()
+    {
+        _loading = true;
+        _error = null;
+        try
+        {
+            _result = await Api.SearchQuotesAsync(
+                string.IsNullOrEmpty(_statusFilter) ? null : _statusFilter,
+                string.IsNullOrEmpty(_stateFilter) ? null : _stateFilter,
+                _page);
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to load quotes: {ex.Message}";
+        }
+        _loading = false;
+    }
+
+    private async Task PrevPage() { _page = Math.Max(1, _page - 1); await LoadQuotes(); }
+    private async Task NextPage() { _page++; await LoadQuotes(); }
+
+    private static string GetStatusBadge(string status) => status switch
+    {
+        "Draft" => "badge-draft",
+        "Approved" => "badge-approved",
+        "Declined" => "badge-declined",
+        "ReferToSenior" => "badge-referred",
+        _ => "badge-pending"
+    };
+}

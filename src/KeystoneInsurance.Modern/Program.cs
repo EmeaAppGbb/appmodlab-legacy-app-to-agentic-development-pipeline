@@ -1,5 +1,7 @@
 using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
+using KeystoneInsurance.Modern.Components;
+using KeystoneInsurance.Modern.Components.Services;
 using KeystoneInsurance.Modern.Data;
 using KeystoneInsurance.Modern.Documents;
 using KeystoneInsurance.Modern.Integration.Reinsurance;
@@ -100,6 +102,15 @@ builder.Services.AddControllers()
 
 builder.Services.AddProblemDetails();
 
+// Blazor Server
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+builder.Services.AddHttpClient<KeystoneApiClient>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:5001/");
+});
+
 // Health checks
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<KeystoneDbContext>();
@@ -115,8 +126,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseAntiforgery();
 app.UseAuthorization();
 app.MapControllers();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 
 // Health check endpoints
 app.MapHealthChecks("/health/ready");

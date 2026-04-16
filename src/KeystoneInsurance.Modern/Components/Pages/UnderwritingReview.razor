@@ -1,0 +1,182 @@
+@page "/underwriting"
+@inject KeystoneApiClient Api
+@inject NavigationManager Nav
+
+<PageTitle>Underwriting Review — Keystone Insurance</PageTitle>
+
+<div class="page-header">
+    <h1>&#x1F50D; Underwriting Review</h1>
+</div>
+
+<div class="card" style="margin-bottom:1rem;">
+    <div style="display:flex;gap:1rem;align-items:end;">
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Quote ID</label>
+            <InputNumber class="form-control" @bind-Value="_quoteId" style="width:140px;" />
+        </div>
+        <button class="btn btn-primary btn-sm" @onclick="LoadQuote">Load Quote</button>
+    </div>
+</div>
+
+@if (_loading)
+{
+    <div class="loading">Loading...</div>
+}
+else if (_error is not null)
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else if (_quote is not null)
+{
+    <div class="card">
+        <div class="card-header">Quote @_quote.QuoteNumber — @_quote.Status</div>
+        <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:1rem;">
+            <div><div class="stat-label">Property</div><div class="value">@_quote.PropertyAddress, @_quote.City @_quote.StateCode</div></div>
+            <div><div class="stat-label">Property Value</div><div class="value">@_quote.PropertyValue.ToString("C0")</div></div>
+            <div><div class="stat-label">Construction</div><div class="value">@_quote.ConstructionType</div></div>
+            <div><div class="stat-label">Occupancy</div><div class="value">@_quote.OccupancyType</div></div>
+            <div><div class="stat-label">Coverage Limit</div><div class="value">@_quote.CoverageLimit.ToString("C0")</div></div>
+            <div><div class="stat-label">Deductible</div><div class="value">@_quote.Deductible.ToString("C0")</div></div>
+            <div><div class="stat-label">Prior Claims</div><div class="value">@_quote.PriorClaimsCount (@_quote.PriorClaimsTotalAmount.ToString("C0"))</div></div>
+            <div><div class="stat-label">Total Premium</div><div class="value" style="font-weight:700;color:var(--primary);">@(_quote.TotalPremium?.ToString("C") ?? "Pending")</div></div>
+        </div>
+    </div>
+
+    @if (_quote.UnderwritingDecision is not null)
+    {
+        var uw = _quote.UnderwritingDecision;
+        <div class="card">
+            <div class="card-header">&#x2705; Existing Underwriting Decision</div>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Decision</div>
+                    <span class="badge @GetDecisionBadge(uw.Decision)" style="font-size:1rem;padding:0.4rem 1rem;">@uw.Decision</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Risk Score</div>
+                    <div class="stat-value">@uw.RiskScore.ToString("F1")</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">High Cat Exposure</div>
+                    <div class="stat-value" style="font-size:1rem;">@(uw.HighCatExposure ? "⚠️ Yes" : "✅ No")</div>
+                </div>
+            </div>
+
+            <div style="margin-top:1rem;">
+                <h4 style="font-size:0.85rem;margin-bottom:0.5rem;">Risk Ratings</h4>
+                <div class="detail-grid">
+                    <div class="detail-item"><label>Construction</label><div class="value">@(uw.ConstructionRating ?? "—")</div></div>
+                    <div class="detail-item"><label>Occupancy</label><div class="value">@(uw.OccupancyRating ?? "—")</div></div>
+                    <div class="detail-item"><label>Protection</label><div class="value">@(uw.ProtectionRating ?? "—")</div></div>
+                    <div class="detail-item"><label>Loss History</label><div class="value">@(uw.LossHistoryRating ?? "—")</div></div>
+                    <div class="detail-item"><label>Catastrophe Zone</label><div class="value">@(uw.CatastropheZoneRating ?? "—")</div></div>
+                    <div class="detail-item"><label>Catastrophe PML</label><div class="value">@(uw.CatastrophePML?.ToString("C0") ?? "—")</div></div>
+                </div>
+            </div>
+
+            @if (uw.ApprovalConditions is not null)
+            {
+                <div class="alert alert-info" style="margin-top:1rem;">
+                    <strong>Conditions:</strong> @uw.ApprovalConditions
+                </div>
+            }
+            @if (uw.DeclineReason is not null)
+            {
+                <div class="alert alert-danger" style="margin-top:1rem;">
+                    <strong>Decline Reason:</strong> @uw.DeclineReason
+                </div>
+            }
+            @if (uw.ReferredToSeniorUnderwriter)
+            {
+                <div class="alert alert-info" style="margin-top:1rem;">
+                    <strong>Referred to Senior Underwriter:</strong> @(uw.ReferralReason ?? "Review required")
+                </div>
+            }
+            @if (uw.AdditionalInformationRequired is not null)
+            {
+                <div class="alert alert-info" style="margin-top:1rem;">
+                    <strong>Additional Info Required:</strong> @uw.AdditionalInformationRequired
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="card" style="text-align:center;padding:2rem;">
+            <p style="color:var(--text-muted);margin-bottom:1rem;">No underwriting decision has been made for this quote.</p>
+            <button class="btn btn-warning" @onclick="Evaluate" disabled="@_evaluating">
+                @if (_evaluating) { <span>Evaluating...</span> } else { <span>&#x1F50D; Evaluate for Underwriting</span> }
+            </button>
+        </div>
+    }
+
+    @if (_evaluationResult is not null)
+    {
+        <div class="alert alert-success" style="margin-top:1rem;">
+            Evaluation complete: <strong>@_evaluationResult.Decision</strong> — Risk Score: @_evaluationResult.RiskScore.ToString("F1")
+        </div>
+    }
+}
+
+@code {
+    private int _quoteId;
+    private QuoteDetailDto? _quote;
+    private bool _loading;
+    private string? _error;
+    private bool _evaluating;
+    private UnderwritingEvaluateResponse? _evaluationResult;
+
+    private async Task LoadQuote()
+    {
+        if (_quoteId <= 0) return;
+        _loading = true;
+        _error = null;
+        _quote = null;
+        _evaluationResult = null;
+
+        try
+        {
+            _quote = await Api.GetQuoteAsync(_quoteId);
+            if (_quote is null) _error = $"Quote #{_quoteId} not found.";
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to load quote: {ex.Message}";
+        }
+        _loading = false;
+    }
+
+    private async Task Evaluate()
+    {
+        _evaluating = true;
+        _error = null;
+        _evaluationResult = null;
+        try
+        {
+            var response = await Api.EvaluateUnderwritingAsync(_quoteId);
+            if (response.IsSuccessStatusCode)
+            {
+                _evaluationResult = await response.Content.ReadFromJsonAsync<UnderwritingEvaluateResponse>();
+                await LoadQuote();
+            }
+            else
+            {
+                _error = $"Evaluation failed: {await response.Content.ReadAsStringAsync()}";
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = $"Error: {ex.Message}";
+        }
+        _evaluating = false;
+    }
+
+    private static string GetDecisionBadge(string decision) => decision switch
+    {
+        "Approved" => "badge-approved",
+        "Declined" => "badge-declined",
+        "ReferToSenior" => "badge-referred",
+        "RequestMoreInfo" => "badge-pending",
+        _ => "badge-draft"
+    };
+}

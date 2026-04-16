@@ -1,0 +1,39 @@
+@inherits LayoutComponentBase
+
+<div class="page">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            &#x1F3E2; Keystone Insurance
+            <small>Commercial Property Platform</small>
+        </div>
+        <nav>
+            <div class="nav-section">Quoting</div>
+            <NavLink class="nav-link" href="quotes" Match="NavLinkMatch.All">
+                <span class="nav-icon">&#x1F4CB;</span> Quotes
+            </NavLink>
+            <NavLink class="nav-link" href="quotes/create">
+                <span class="nav-icon">&#x2795;</span> New Quote
+            </NavLink>
+
+            <div class="nav-section">Underwriting</div>
+            <NavLink class="nav-link" href="underwriting">
+                <span class="nav-icon">&#x1F50D;</span> Review
+            </NavLink>
+
+            <div class="nav-section">Policy Management</div>
+            <NavLink class="nav-link" href="policies">
+                <span class="nav-icon">&#x1F4C4;</span> Policies
+            </NavLink>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <span style="font-size:0.85rem;color:var(--text-muted);">Keystone Insurance Management System</span>
+            <span style="font-size:0.8rem;color:var(--text-muted);">&#x1F464; Agent</span>
+        </div>
+        <div class="content-area">
+            @Body
+        </div>
+    </div>
+</div>

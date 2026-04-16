@@ -1,0 +1,253 @@
+@page "/quotes/{QuoteId:int}"
+@inject KeystoneApiClient Api
+@inject NavigationManager Nav
+
+<PageTitle>Quote Details — Keystone Insurance</PageTitle>
+
+@if (_loading)
+{
+    <div class="loading">Loading quote...</div>
+}
+else if (_error is not null)
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else if (_quote is not null)
+{
+    <div class="page-header">
+        <div>
+            <h1>Quote @_quote.QuoteNumber</h1>
+            <span style="font-size:0.85rem;color:var(--text-muted);">Created @_quote.CreatedDate.ToString("MMMM d, yyyy") · Expires @_quote.ExpirationDate.ToString("MMMM d, yyyy")</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;">
+            <span class="badge @GetStatusBadge(_quote.Status)" style="font-size:0.85rem;padding:0.4rem 1rem;">@_quote.Status</span>
+            <a href="quotes" class="btn btn-outline btn-sm">&#x25C0; Back</a>
+        </div>
+    </div>
+
+    @if (_actionMessage is not null)
+    {
+        <div class="alert @(_actionIsError ? "alert-danger" : "alert-success")">@_actionMessage</div>
+    }
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-label">Base Premium</div>
+            <div class="stat-value">@(_quote.BasePremium?.ToString("C") ?? "—")</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Premium</div>
+            <div class="stat-value" style="color:var(--primary);">@(_quote.TotalPremium?.ToString("C") ?? "—")</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Coverage Limit</div>
+            <div class="stat-value">@_quote.CoverageLimit.ToString("C0")</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Deductible</div>
+            <div class="stat-value">@_quote.Deductible.ToString("C0")</div>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="card">
+            <div class="card-header">&#x1F3E0; Property Information</div>
+            <div class="detail-grid">
+                <div class="detail-item"><label>Address</label><div class="value">@_quote.PropertyAddress</div></div>
+                <div class="detail-item"><label>City</label><div class="value">@_quote.City, @_quote.StateCode @_quote.ZipCode</div></div>
+                <div class="detail-item"><label>Property Value</label><div class="value">@_quote.PropertyValue.ToString("C0")</div></div>
+                <div class="detail-item"><label>Construction</label><div class="value">@_quote.ConstructionType</div></div>
+                <div class="detail-item"><label>Occupancy</label><div class="value">@_quote.OccupancyType</div></div>
+                <div class="detail-item"><label>Year Built</label><div class="value">@_quote.YearBuilt</div></div>
+                <div class="detail-item"><label>Square Footage</label><div class="value">@_quote.SquareFootage.ToString("N0")</div></div>
+                <div class="detail-item"><label>Stories</label><div class="value">@_quote.NumberOfStories</div></div>
+                <div class="detail-item"><label>Roof</label><div class="value">@(_quote.RoofType ?? "N/A") (@_quote.RoofAge yrs)</div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">&#x1F6E1;&#xFE0F; Coverage & Protection</div>
+            <div class="detail-grid">
+                <div class="detail-item"><label>Sprinklers</label><div class="value">@(_quote.SprinklersInstalled ? "✅ Yes" : "❌ No")</div></div>
+                <div class="detail-item"><label>Alarm System</label><div class="value">@(_quote.AlarmSystemInstalled ? "✅ Yes" : "❌ No")</div></div>
+                <div class="detail-item"><label>Business Interruption</label><div class="value">@(_quote.BusinessInterruptionCoverage ? $"✅ {_quote.BusinessInterruptionLimit?.ToString("C0")}" : "❌ No")</div></div>
+                <div class="detail-item"><label>Equipment Breakdown</label><div class="value">@(_quote.EquipmentBreakdownCoverage ? "✅ Yes" : "❌ No")</div></div>
+                <div class="detail-item"><label>Flood Coverage</label><div class="value">@(_quote.FloodCoverage ? "✅ Yes" : "❌ No")</div></div>
+                <div class="detail-item"><label>Earthquake Coverage</label><div class="value">@(_quote.EarthquakeCoverage ? "✅ Yes" : "❌ No")</div></div>
+                <div class="detail-item"><label>Prior Claims</label><div class="value">@_quote.PriorClaimsCount (@_quote.PriorClaimsTotalAmount.ToString("C0"))</div></div>
+            </div>
+        </div>
+    </div>
+
+    @if (_quote.UnderwritingDecision is not null)
+    {
+        var uw = _quote.UnderwritingDecision;
+        <div class="card" style="margin-top:1rem;">
+            <div class="card-header">&#x1F50D; Underwriting Decision</div>
+            <div style="display:flex;gap:2rem;align-items:start;flex-wrap:wrap;">
+                <div>
+                    <div class="stat-label">Decision</div>
+                    <span class="badge @GetStatusBadge(uw.Decision)" style="font-size:0.9rem;padding:0.4rem 1rem;">@uw.Decision</span>
+                </div>
+                <div>
+                    <div class="stat-label">Risk Score</div>
+                    <div class="stat-value" style="font-size:1.3rem;">@uw.RiskScore.ToString("F1")</div>
+                </div>
+                <div>
+                    <div class="stat-label">Decision Date</div>
+                    <div class="value">@uw.DecisionDate.ToString("MM/dd/yyyy HH:mm")</div>
+                </div>
+            </div>
+            <div class="detail-grid" style="margin-top:1rem;">
+                <div class="detail-item"><label>Construction Rating</label><div class="value">@(uw.ConstructionRating ?? "—")</div></div>
+                <div class="detail-item"><label>Occupancy Rating</label><div class="value">@(uw.OccupancyRating ?? "—")</div></div>
+                <div class="detail-item"><label>Protection Rating</label><div class="value">@(uw.ProtectionRating ?? "—")</div></div>
+                <div class="detail-item"><label>Loss History Rating</label><div class="value">@(uw.LossHistoryRating ?? "—")</div></div>
+                <div class="detail-item"><label>Catastrophe Zone</label><div class="value">@(uw.CatastropheZoneRating ?? "—")</div></div>
+                <div class="detail-item"><label>High Cat Exposure</label><div class="value">@(uw.HighCatExposure ? "⚠️ Yes" : "No")</div></div>
+            </div>
+            @if (uw.ApprovalConditions is not null)
+            {
+                <div style="margin-top:0.75rem;"><label style="font-size:0.75rem;color:var(--text-muted);">Conditions</label><div>@uw.ApprovalConditions</div></div>
+            }
+            @if (uw.DeclineReason is not null)
+            {
+                <div style="margin-top:0.75rem;"><label style="font-size:0.75rem;color:var(--text-muted);">Decline Reason</label><div style="color:var(--danger);">@uw.DeclineReason</div></div>
+            }
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(_quote.PremiumCalculationDetails))
+    {
+        <div class="card" style="margin-top:1rem;">
+            <div class="card-header">&#x1F4CA; Premium Calculation Details</div>
+            <pre style="font-size:0.8rem;white-space:pre-wrap;margin:0;">@_quote.PremiumCalculationDetails</pre>
+        </div>
+    }
+
+    <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
+        @if (_quote.Status == "Draft")
+        {
+            <button class="btn btn-warning" @onclick="SubmitForUnderwriting" disabled="@_actionLoading">
+                @if (_actionLoading) { <span>Submitting...</span> } else { <span>&#x1F50D; Submit for Underwriting</span> }
+            </button>
+            <button class="btn btn-outline" @onclick="RecalculatePremium" disabled="@_actionLoading">
+                &#x1F504; Recalculate Premium
+            </button>
+        }
+        @if (_quote.Status == "Approved")
+        {
+            <button class="btn btn-success" @onclick="BindPolicy" disabled="@_actionLoading">
+                @if (_actionLoading) { <span>Binding...</span> } else { <span>&#x1F4C4; Bind to Policy</span> }
+            </button>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public int QuoteId { get; set; }
+
+    private QuoteDetailDto? _quote;
+    private bool _loading = true;
+    private string? _error;
+    private string? _actionMessage;
+    private bool _actionIsError;
+    private bool _actionLoading;
+
+    protected override async Task OnInitializedAsync() => await LoadQuote();
+
+    private async Task LoadQuote()
+    {
+        _loading = true;
+        _error = null;
+        try
+        {
+            _quote = await Api.GetQuoteAsync(QuoteId);
+            if (_quote is null) _error = "Quote not found.";
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to load quote: {ex.Message}";
+        }
+        _loading = false;
+    }
+
+    private async Task SubmitForUnderwriting()
+    {
+        _actionLoading = true;
+        _actionMessage = null;
+        try
+        {
+            var response = await Api.EvaluateUnderwritingAsync(QuoteId);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<UnderwritingEvaluateResponse>();
+                _actionMessage = $"Underwriting decision: {result?.Decision} (Risk Score: {result?.RiskScore:F1})";
+                _actionIsError = false;
+                await LoadQuote();
+            }
+            else
+            {
+                _actionMessage = $"Underwriting evaluation failed: {await response.Content.ReadAsStringAsync()}";
+                _actionIsError = true;
+            }
+        }
+        catch (Exception ex) { _actionMessage = $"Error: {ex.Message}"; _actionIsError = true; }
+        _actionLoading = false;
+    }
+
+    private async Task RecalculatePremium()
+    {
+        _actionLoading = true;
+        _actionMessage = null;
+        try
+        {
+            var response = await Api.RecalculateQuoteAsync(QuoteId);
+            if (response.IsSuccessStatusCode)
+            {
+                _actionMessage = "Premium recalculated successfully.";
+                _actionIsError = false;
+                await LoadQuote();
+            }
+            else
+            {
+                _actionMessage = $"Recalculation failed: {await response.Content.ReadAsStringAsync()}";
+                _actionIsError = true;
+            }
+        }
+        catch (Exception ex) { _actionMessage = $"Error: {ex.Message}"; _actionIsError = true; }
+        _actionLoading = false;
+    }
+
+    private async Task BindPolicy()
+    {
+        _actionLoading = true;
+        _actionMessage = null;
+        try
+        {
+            var response = await Api.IssuePolicyAsync(QuoteId, DateTime.UtcNow.AddDays(15), "Quarterly");
+            if (response.IsSuccessStatusCode)
+            {
+                _actionMessage = "Policy bound successfully!";
+                _actionIsError = false;
+                await LoadQuote();
+            }
+            else
+            {
+                _actionMessage = $"Policy binding failed: {await response.Content.ReadAsStringAsync()}";
+                _actionIsError = true;
+            }
+        }
+        catch (Exception ex) { _actionMessage = $"Error: {ex.Message}"; _actionIsError = true; }
+        _actionLoading = false;
+    }
+
+    private static string GetStatusBadge(string status) => status switch
+    {
+        "Draft" => "badge-draft",
+        "Approved" => "badge-approved",
+        "Declined" => "badge-declined",
+        "ReferToSenior" => "badge-referred",
+        _ => "badge-pending"
+    };
+}

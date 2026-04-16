@@ -1,0 +1,116 @@
+@page "/policies/{PolicyId:int}"
+@inject KeystoneApiClient Api
+@inject NavigationManager Nav
+
+<PageTitle>Policy Details — Keystone Insurance</PageTitle>
+
+@if (_loading)
+{
+    <div class="loading">Loading policy...</div>
+}
+else if (_error is not null)
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else if (_policy is not null)
+{
+    <div class="page-header">
+        <div>
+            <h1>Policy @_policy.PolicyNumber</h1>
+            <span style="font-size:0.85rem;color:var(--text-muted);">
+                Issued @_policy.IssueDate.ToString("MMMM d, yyyy") ·
+                @_policy.EffectiveDate.ToString("MM/dd/yyyy") – @_policy.ExpirationDate.ToString("MM/dd/yyyy")
+            </span>
+        </div>
+        <div style="display:flex;gap:0.5rem;">
+            <span class="badge @GetPolicyBadge(_policy.Status)" style="font-size:0.85rem;padding:0.4rem 1rem;">@_policy.Status</span>
+            <a href="policies" class="btn btn-outline btn-sm">&#x25C0; Back</a>
+        </div>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-label">Annual Premium</div>
+            <div class="stat-value" style="color:var(--primary);">@_policy.AnnualPremium.ToString("C")</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Payment Plan</div>
+            <div class="stat-value" style="font-size:1.2rem;">@_policy.PaymentPlan</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Installment</div>
+            <div class="stat-value">@(_policy.InstallmentAmount?.ToString("C") ?? "—")</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Next Payment Due</div>
+            <div class="stat-value" style="font-size:1rem;">@(_policy.NextPaymentDue?.ToString("MM/dd/yyyy") ?? "—")</div>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="card">
+            <div class="card-header">&#x1F4B0; Coverage Details</div>
+            <div class="detail-grid">
+                <div class="detail-item"><label>Coverage Type</label><div class="value">@_policy.CoverageType</div></div>
+                <div class="detail-item"><label>Coverage Limit</label><div class="value">@_policy.CoverageLimit.ToString("C0")</div></div>
+                <div class="detail-item"><label>Deductible</label><div class="value">@_policy.Deductible.ToString("C0")</div></div>
+                <div class="detail-item"><label>Business Interruption</label><div class="value">@(_policy.BusinessInterruptionCoverage ? $"✅ {_policy.BusinessInterruptionLimit?.ToString("C0")}" : "❌ No")</div></div>
+                <div class="detail-item"><label>Equipment Breakdown</label><div class="value">@(_policy.EquipmentBreakdownCoverage ? "✅ Yes" : "❌ No")</div></div>
+                <div class="detail-item"><label>Flood Coverage</label><div class="value">@(_policy.FloodCoverage ? $"✅ {_policy.FloodLimit?.ToString("C0")}" : "❌ No")</div></div>
+                <div class="detail-item"><label>Earthquake Coverage</label><div class="value">@(_policy.EarthquakeCoverage ? $"✅ {_policy.EarthquakeLimit?.ToString("C0")}" : "❌ No")</div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">&#x1F3E6; Reinsurance & Status</div>
+            <div class="detail-grid">
+                <div class="detail-item"><label>Reinsurance Ceded</label><div class="value">@(_policy.ReinsuranceCeded ? "✅ Yes" : "No")</div></div>
+                <div class="detail-item"><label>Ceded Premium</label><div class="value">@(_policy.CededPremium?.ToString("C") ?? "—")</div></div>
+                <div class="detail-item"><label>Treaty ID</label><div class="value">@(_policy.ReinsuranceTreatyId ?? "—")</div></div>
+                <div class="detail-item"><label>Quote ID</label><div class="value"><a href="quotes/@_policy.QuoteId">@_policy.QuoteId</a></div></div>
+            </div>
+
+            @if (_policy.CancellationDate.HasValue)
+            {
+                <div style="margin-top:1rem;padding-top:0.75rem;border-top:1px solid var(--border);">
+                    <div class="stat-label" style="color:var(--danger);">Cancellation</div>
+                    <div class="detail-grid" style="margin-top:0.5rem;">
+                        <div class="detail-item"><label>Date</label><div class="value">@_policy.CancellationDate?.ToString("MM/dd/yyyy")</div></div>
+                        <div class="detail-item"><label>Reason</label><div class="value">@_policy.CancellationReason</div></div>
+                        <div class="detail-item"><label>Return Premium</label><div class="value">@(_policy.ReturnPremium?.ToString("C") ?? "—")</div></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int PolicyId { get; set; }
+
+    private PolicyDetailDto? _policy;
+    private bool _loading = true;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _policy = await Api.GetPolicyAsync(PolicyId);
+            if (_policy is null) _error = "Policy not found.";
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to load policy: {ex.Message}";
+        }
+        _loading = false;
+    }
+
+    private static string GetPolicyBadge(string status) => status switch
+    {
+        "Active" => "badge-active",
+        "Cancelled" => "badge-cancelled",
+        "Expired" => "badge-declined",
+        _ => "badge-pending"
+    };
+}

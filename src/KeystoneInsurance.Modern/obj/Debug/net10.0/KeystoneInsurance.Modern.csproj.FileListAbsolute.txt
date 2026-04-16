@@ -209,3 +209,5 @@ C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline\src\Keysto
 C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline\src\KeystoneInsurance.Modern\bin\Debug\net10.0\runtimes\win-x86\native\libstdc++-6.dll
 C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline\src\KeystoneInsurance.Modern\bin\Debug\net10.0\runtimes\win-x86\native\libwinpthread-1.dll
 C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline\src\KeystoneInsurance.Modern\bin\Debug\net10.0\runtimes\win-x86\native\qpdf.dll
+C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline\src\KeystoneInsurance.Modern\obj\Debug\net10.0\EmbeddedAttribute.cs
+C:\code\gbb\labs\appmodlab-legacy-app-to-agentic-development-pipeline\src\KeystoneInsurance.Modern\obj\Debug\net10.0\ValidatableTypeAttribute.cs
