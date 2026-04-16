@@ -1,0 +1,298 @@
+ÔùÅ List directory .
+  Ôöö 12 files found
+
+ÔùÅ List directory database
+  Ôöö 3 files found
+
+ÔùÅ List directory KeystoneInsurance.Core
+  Ôöö 6 files found
+
+ÔùÅ List directory KeystoneInsurance.Web
+  Ôöö 1 file found
+
+ÔùÅ Read Web.config
+  Ôöé KeystoneInsurance.Web\Web.config
+  Ôöö 71 lines read
+
+ÔùÅ Read KeystoneInsurance.sln
+  Ôöö 49 lines read
+
+ÔùÅ Read KeystoneInsurance.Core.csproj
+  Ôöé KeystoneInsurance.Core\KeystoneInsurance.Core.csproj
+  Ôöö 67 lines read
+
+ÔùÅ List directory KeystoneInsurance.Core\Properties
+  Ôöö 1 file found
+
+ÔùÅ List directory KeystoneInsurance.Core\Domain
+  Ôöö 2 files found
+
+ÔùÅ List directory KeystoneInsurance.Core\Integration
+  Ôöö 2 files found
+
+ÔùÅ List directory KeystoneInsurance.Core\Services
+  Ôöö 7 files found
+
+Now let me read all the source files in parallel:
+
+ÔùÅ Read QuotingEngine.cs
+  Ôöé KeystoneInsurance.Core\Services\QuotingEngine.cs
+  Ôöö 1 line read
+
+ÔùÅ Read PolicyService.cs
+  Ôöé KeystoneInsurance.Core\Services\PolicyService.cs
+  Ôöö 150 lines read
+
+ÔùÅ Read PremiumCalculator.cs
+  Ôöé KeystoneInsurance.Core\Services\PremiumCalculator.cs
+  Ôöö 57 lines read
+
+ÔùÅ Read ComplianceService.cs
+  Ôöé KeystoneInsurance.Core\Services\ComplianceService.cs
+  Ôöö 202 lines read
+
+ÔùÅ Read UnderwritingService.cs
+  Ôöé KeystoneInsurance.Core\Services\UnderwritingService.cs
+  Ôöö 297 lines read
+
+ÔùÅ Read RenewalService.cs
+  Ôöé KeystoneInsurance.Core\Services\RenewalService.cs
+  Ôöö 107 lines read
+
+ÔùÅ Read EndorsementService.cs
+  Ôöé KeystoneInsurance.Core\Services\EndorsementService.cs
+  Ôöö 133 lines read
+
+ÔùÅ Read ReinsuranceClient.cs
+  Ôöé KeystoneInsurance.Core\Integration\ReinsuranceClient.cs
+  Ôöö 114 lines read
+
+ÔùÅ Read RegulatoryReporter.cs
+  Ôöé KeystoneInsurance.Core\Integration\RegulatoryReporter.cs
+  Ôöö 143 lines read
+
+ÔùÅ Read stored-procedures.sql
+  Ôöé database\stored-procedures.sql
+  Ôöö 165 lines read
+
+ÔùÅ Read schema.sql
+  Ôöé database\schema.sql
+  Ôöö 282 lines read
+
+ÔùÅ Read seed-data.sql
+  Ôöé database\seed-data.sql
+  Ôöö 73 lines read
+
+Now let me read the remaining files ÔÇö QuotingEngine.cs (large file) and the domain entities/rules:
+
+ÔùÅ List directory KeystoneInsurance.Core\Domain
+  Ôöö 2 files found
+
+ÔùÅ Read QuotingEngine.cs
+  Ôöé KeystoneInsurance.Core\Services\QuotingEngine.cs
+  Ôöö L1:100 (100 lines read)
+
+ÔùÅ Read QuotingEngine.cs
+  Ôöé KeystoneInsurance.Core\Services\QuotingEngine.cs
+  Ôöö L250:400 (151 lines read)
+
+ÔùÅ Read QuotingEngine.cs
+  Ôöé KeystoneInsurance.Core\Services\QuotingEngine.cs
+  Ôöö L100:250 (151 lines read)
+
+ÔùÅ Read QuotingEngine.cs
+  Ôöé KeystoneInsurance.Core\Services\QuotingEngine.cs
+  Ôöö L400:550 (151 lines read)
+
+ÔùÅ Read QuotingEngine.cs
+  Ôöé KeystoneInsurance.Core\Services\QuotingEngine.cs
+  Ôöö L550:700 (137 lines read)
+
+ÔùÅ List directory KeystoneInsurance.Core\Domain\Entities
+  Ôöö 8 files found
+
+ÔùÅ List directory KeystoneInsurance.Core\Domain\Rules
+  Ôöö 3 files found
+
+ÔùÅ Explore Read entities and rules
+  Ôöé Read SPEC2CLOUD.MD
+  Ôöé   Ôöö 15 lines read
+  Ôöö Read README.md
+      Ôöö L1:100 (99 lines read)
+
+ÔùÅ Create plan.md +4
+  Ôöö ~\.copilot\session-state\2171a415-2abe-46ea-99b0-56d2bb005253\plan.md
+
+---
+
+# ­ƒÅø´©Å Keystone Insurance ÔÇö Legacy Application Analysis Report
+
+## 1. Architecture Overview
+
+| Attribute | Value |
+|---|---|
+| **Pattern** | ASP.NET MVC 4/5 Monolith |
+| **Framework** | .NET Framework 4.6.1 |
+| **Language** | C# |
+| **Authentication** | Windows Authentication |
+| **Database** | SQL Server 2012+ (localdb) |
+| **Solution** | 6 projects in `KeystoneInsurance.sln` |
+
+### Solution Projects
+
+| Project | Purpose |
+|---|---|
+| `KeystoneInsurance.Web` | ASP.NET MVC front-end (MVC 5.2.3) |
+| `KeystoneInsurance.Core` | Business logic (quoting, underwriting, compliance) |
+| `KeystoneInsurance.Data` | Data access layer (Entity Framework, EDMX) |
+| `KeystoneInsurance.Reports` | Crystal Reports document generation |
+| `KeystoneInsurance.Messaging` | MSMQ message queue integration |
+| `KeystoneInsurance.Tests` | Test project |
+
+---
+
+## 2. Key Complexity Areas
+
+### QuotingEngine.cs ÔÇö **687 lines** (Highest complexity)
+- **17-step premium calculation algorithm** with 40+ rating factors across 50 states
+- Hardcoded lookup dictionaries for base rates (20 states), occupancy factors (11 types), territory factors, catastrophe zones, state taxes, and minimum premiums
+- Factors: property value (7 tiers), construction type (6 classes), building age (8 bands), occupancy (11 types + state adjustments), protection (sprinklers/alarm with combined bonus), territory/ZIP, catastrophe zone (hurricane/earthquake/tornado), roof type (6 types) ├ù age (5 bands), square footage (6 tiers), stories (6 bands), loss history (frequency ├ù severity), deductible credit (6 tiers)
+- Optional coverage calculations: Business Interruption, Equipment Breakdown, Flood, Earthquake
+- State-specific surcharges/taxes + TRIA terrorism surcharge + fire marshal fees
+- **No dependency injection** ÔÇö instantiates `PremiumCalculator` and `ComplianceService` directly
+
+### UnderwritingService.cs ÔÇö **297 lines**
+- Risk scoring (0ÔÇô100 scale) with multi-factor evaluation
+- 4-outcome decision tree: Approved / Declined / ReferToSenior / RequestMoreInfo
+- Probable Maximum Loss (PML) calculation with state-specific adjustments
+- Evaluates 5 risk dimensions: Construction, Occupancy, Protection, Loss History, Catastrophe Exposure
+- Auto-decline triggers: risk score > 85 or PML > 50% of property value
+
+### ComplianceService.cs ÔÇö **202 lines**
+- State-by-state regulatory validation (CA Prop 103, FL building code, TX wind/hail, NY replacement cost, LA hurricane deductible)
+- Per-state compliance rules with warnings and hard blocks
+
+### PolicyService.cs ÔÇö **150 lines**
+- Full policy lifecycle: issue, cancel (pro-rata/short-rate/flat), renew
+- Reinsurance cession logic (>$2M property value ÔåÆ 60% ceded)
+
+### EndorsementService.cs ÔÇö **133 lines**
+- Mid-term policy modifications: coverage limit changes, deductible changes, cancellations
+- Pro-rated premium adjustments with deductible credit tables
+
+### RenewalService.cs ÔÇö **107 lines**
+- Automated renewal quote generation with inflation (3%), state-specific trend factors (3ÔÇô12%)
+- Re-invokes full QuotingEngine for premium recalculation
+
+---
+
+## 3. Domain Model (8 Entities)
+
+| Entity | Key Fields |
+|---|---|
+| **Client** | Business info, risk tier, credit score, claims history |
+| **Quote** | Property details, 30+ fields, coverage options, premium results |
+| **Policy** | Lifecycle status, payment plan, reinsurance, cancellation tracking |
+| **Property** | Physical characteristics, protection, catastrophe zones, environmental |
+| **Coverage** | Coverage types with base rates and rating basis |
+| **Endorsement** | Policy modifications with premium adjustments |
+| **RateFactor** | State/territory-specific rate multipliers with effective dates |
+| **UnderwritingDecision** | Risk score, 5 rating dimensions, PML, referral tracking |
+
+### Business Rules (3 Rule Sets)
+- **RatingRules**: Preferred rate eligibility, wind mitigation, minimum deductible by state
+- **UnderwritingRules**: Auto-decline criteria, senior referral triggers, inspection requirements
+- **ComplianceRules**: State minimum premiums, tax rates, disclosure requirements, cancellation notice periods
+
+---
+
+## 4. Legacy Technology Dependencies
+
+| Technology | Usage | Modernization Challenge |
+|---|---|---|
+| **.NET Framework 4.6.1** | Runtime | Must migrate to .NET 8+ |
+| **ASP.NET MVC 5.2.3** | Web framework | Replace with ASP.NET Core / Blazor |
+| **Entity Framework 5 (EDMX)** | Database-first ORM | Migrate to EF Core (code-first) |
+| **WCF (BasicHttpBinding)** | Reinsurance partner integration | Replace with REST/gRPC APIs |
+| **MSMQ** | Async policy issuance & endorsements | Replace with Azure Service Bus |
+| **Crystal Reports** | Policy document generation | Replace with modern reporting |
+| **jQuery UI** | Client-side UI | Replace with Blazor/modern SPA |
+| **Windows Authentication** | User auth | Replace with Azure AD/Identity |
+| **SQL Server 2012** | Database | Migrate to Azure SQL Database |
+| **MSBuild ToolsVersion 12.0** | Build system | Migrate to SDK-style projects |
+
+---
+
+## 5. Database Structure
+
+### 8 Tables
+| Table | Records (seed) | Key Relationships |
+|---|---|---|
+| **Clients** | 5 | Root entity |
+| **Quotes** | 1 | FK ÔåÆ Clients |
+| **UnderwritingDecisions** | 1 | FK ÔåÆ Quotes |
+| **Policies** | 0 | FK ÔåÆ Quotes |
+| **Endorsements** | 0 | FK ÔåÆ Policies |
+| **RateFactors** | 17 | Construction (6), Territory (5), Occupancy (6) |
+| **CoverageOptions** | 6 | Standalone lookup |
+| **AuditLog** | 0 | Change tracking |
+
+### Stored Procedures (6 defined, 200+ in full system)
+- `usp_GetQuoteDetails` ÔÇö Quote with client and UW joins
+- `usp_CalculatePremium` ÔÇö DB-side premium calculation (parallel to C# engine)
+- `usp_SearchQuotes` ÔÇö Multi-parameter dynamic search
+- `usp_GetExpiringPolicies` ÔÇö Renewal pipeline feed
+- `usp_UpdatePolicyStatus` ÔÇö Status update with audit trail
+- `usp_GetPremiumSummaryByState` ÔÇö Reporting/analytics
+
+### Indexes
+- Quotes: ClientId, Status, StateCode
+- Policies: QuoteId, PolicyNumber, Status, EffectiveDate
+- UnderwritingDecisions: QuoteId, Decision
+- RateFactors: Type+State, EffectiveDate range
+- AuditLog: Table+RecordId, Date
+
+---
+
+## 6. Integration Points
+
+| Integration | Protocol | Endpoint | Purpose |
+|---|---|---|---|
+| **Reinsurance Partner** | WCF/SOAP (BasicHttpBinding) | `http://reinsurance-partner.example.com/service` | Risk cession & claim recovery |
+| **NAIC Regulatory Reporting** | HTTP | `https://naic-reporting.example.com/api` | Quarterly reports, rate filings, policy transactions |
+| **MSMQ - Policy Issuance** | MSMQ | `.\private$\policyissuance` | Async policy creation |
+| **MSMQ - Endorsements** | MSMQ | `.\private$\endorsements` | Async policy changes |
+
+---
+
+## 7. Key Risks & Anti-Patterns
+
+1. **No dependency injection** ÔÇö All services use `new` to create dependencies (untestable)
+2. **Hardcoded business rules** ÔÇö Rate tables, state factors, and thresholds embedded in C# code instead of database/configuration
+3. **Dual premium calculation** ÔÇö Both C# (`QuotingEngine`) and SQL (`usp_CalculatePremium`) compute premiums ÔåÆ drift risk
+4. **Magic strings everywhere** ÔÇö Status values, construction types, occupancy types as raw strings (no enums)
+5. **DateTime.Now coupling** ÔÇö Timestamps hardcoded, making testing difficult
+6. **God class** ÔÇö `QuotingEngine` (687 lines) handles all 17 calculation steps in one class
+7. **No error handling** ÔÇö Services lack try/catch; failures propagate as unhandled exceptions
+8. **Monolithic data model** ÔÇö Quote entity has 30+ properties spanning property, coverage, and claims concerns
+
+---
+
+## 8. Modernization Target (from lab docs)
+
+| Current | Target |
+|---|---|
+| .NET Framework 4.6.1 | .NET 8+ |
+| ASP.NET MVC 5 | ASP.NET Core / Blazor |
+| Entity Framework 5 EDMX | EF Core (code-first) |
+| SQL Server on-prem | Azure SQL Database |
+| WCF SOAP | REST APIs |
+| MSMQ | Azure Service Bus |
+| Crystal Reports | Modern reporting |
+| Windows Auth | Azure AD / Identity |
+| Monolith | Azure Container Apps (microservices-ready) |
+
+
+Changes   +4 -0
+Requests  3 Premium (2m 41s)
+Tokens    Ôåæ 470.6k ÔÇó Ôåô 10.9k ÔÇó 346.2k (cached)
