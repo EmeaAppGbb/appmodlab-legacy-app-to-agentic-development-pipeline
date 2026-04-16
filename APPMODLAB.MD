@@ -75,3 +75,51 @@ The risk scoring algorithm implements a decision tree with three outcomes (Appro
 - **Cannot Run:** Requires .NET Framework 4.6.1 Developer Pack, SQL Server LocalDB, IIS Express, and Visual Studio — this is intentionally a legacy demo app for the Spec2Cloud → SQUAD modernization pipeline
 - **Core Complexity:** The `QuotingEngine.cs` (685 lines) contains 15-step premium calculation with state-specific compliance rules for all 50 US states (see [QuotingEngine Complexity](assets/screenshots/03-quoting-engine-complexity.md) for details)
 - **Database:** 8 tables, 200+ stored procedures (referenced), 486 lines of SQL
+
+---
+
+## Solution Walkthrough
+
+The `solution-final` branch contains the complete end-to-end modernization pipeline executed using **GitHub Copilot CLI** and **Squad CLI**. Each step is tagged for easy navigation.
+
+### Steps Completed
+
+| Step | Tag | Tool | Description |
+|------|-----|------|-------------|
+| 01 | `step-01-explore-legacy-app` | Copilot CLI | Analyzed the legacy ASP.NET MVC 4 Keystone Insurance codebase — architecture, complexity areas, technology dependencies |
+| 02 | `step-02-spec2cloud-analysis` | Copilot CLI | Generated 5 Spec2Cloud specification documents: architecture, API contracts, data model, business rules catalog, integration specs |
+| 03 | `step-03-review-specifications` | Copilot CLI | Reviewed and validated specifications for completeness, consistency, and feasibility |
+| 04 | `step-04-squad-setup` | Squad CLI | Initialized SQUAD workspace with `squad init` — agents, skills, workflows, identity, and GitHub Actions |
+| 05 | `step-05-brain-planning` | Squad CLI + Copilot CLI | Hired team roles (`squad hire`) and created development plan from specifications |
+| 06 | `step-06-core-services` | Copilot CLI | Built .NET 9 core services: QuotingEngine, PremiumCalculator, UnderwritingService, PolicyService, ComplianceService with EF Core and REST API controllers |
+| 07 | `step-07-integrations` | Copilot CLI | Added Azure Service Bus messaging, HttpClient+Polly reinsurance client, regulatory reporting, QuestPDF document generation |
+| 08 | `step-08-frontend` | Copilot CLI | Created Blazor Server pages for quote management, policy management, and underwriting review |
+| 09 | `step-09-eyes-review` | Copilot CLI | Spec-based code review validating architecture compliance, API completeness, business rule fidelity |
+| 10 | `step-10-mouth-documentation` | Copilot CLI | Generated deployment guide, API reference, migration guide, and project README |
+| 11 | `step-11-deploy-validate` | Copilot CLI | Created Bicep IaC templates, Dockerfile, and GitHub Actions CI/CD for Azure Container Apps deployment |
+
+### How to Navigate
+
+```bash
+# View the complete solution
+git checkout solution-final
+
+# Jump to a specific step
+git checkout step-06-core-services
+
+# View step diff
+git diff step-05-brain-planning..step-06-core-services
+
+# View all outputs
+ls assets/outputs/
+```
+
+### Key Artifacts
+
+- **specs/** — 6 Spec2Cloud specification documents (architecture, API, data model, business rules, integrations, development plan)
+- **src/KeystoneInsurance.Modern/** — Complete .NET 9 modernized application with Blazor Server UI
+- **infra/** — Azure Bicep templates for Container Apps, SQL, Service Bus, Storage, Redis, App Insights
+- **docs/** — Deployment guide, API reference, migration guide
+- **assets/outputs/** — Raw CLI output from every step
+- **.squad/** — SQUAD team workspace with agents, skills, and workflows
+- **.github/workflows/** — CI/CD and SQUAD automation workflows
